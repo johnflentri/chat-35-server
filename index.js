@@ -1,5 +1,6 @@
 const express = require('express')
 const Sse = require('json-sse')
+const cors = require('cors')
 const app = express()
 const port = 4000
 
@@ -9,12 +10,16 @@ const db = {}
 
 db.messages = []
 
+const corsMiddleware = cors()
+app.use(corsMiddleware)
+
 const parser = express.json()
 app.use(parser)
 
 const stream = new Sse()
 
 app.get('/stream', (request, response) => {
+  stream.updateInit(db.messages)
   stream.init(request, response)
 })
 
